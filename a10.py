@@ -102,7 +102,15 @@ def get_polar_radius(planet_name: str) -> str:
     match = get_match(infobox_text, pattern, error_text)
 
     return match.group("radius")
+   
+def death_info(planet_name: str) -> str:
+ 
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
+    pattern = r"(?:Polar radius|Mean radius)(?:[^\d]*)(?P<radius>[\d,.]+)(?:.*?)km"
+    error_text = "Page infobox has no polar radius information"
+    match = get_match(infobox_text, pattern, error_text)
 
+    return match.group("radius")
 
 def get_birth_date(name: str) -> str:
     """Gets birth date of the given person
@@ -167,6 +175,7 @@ Action = Callable[[List[str]], List[Any]]
 pa_list: List[Tuple[Pattern, Action]] = [
     ("when was % born".split(), birth_date),
     ("what is the polar radius of %".split(), polar_radius),
+    ("how did % die")
     (["bye"], bye_action),
 ]
 
