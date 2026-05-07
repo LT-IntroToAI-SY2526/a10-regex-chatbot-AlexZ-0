@@ -86,7 +86,6 @@ def get_match(
         raise AttributeError(error_text)
     return match
 
-
 def get_polar_radius(planet_name: str) -> str:
     """Gets the radius of the given planet
 
@@ -123,7 +122,14 @@ def get_birth_date(name: str) -> str:
 
     return match.group("birth")
 
+def show_infobox(matches: List[str]) -> List[str]:
+    title = " ".join(matches)
+    html = get_page_html(title)
+    info = get_first_infobox_text(html)
+    return [clean_text(info)]
 
+def death_cause(matches: List[str]) -> List[str]:
+    
 # below are a set of actions. Each takes a list argument and returns a list of answers
 # according to the action and the argument. It is important that each function returns a
 # list of the answer(s) and not just the answer itself.
@@ -168,6 +174,7 @@ Action = Callable[[List[str]], List[Any]]
 pa_list: List[Tuple[Pattern, Action]] = [
     ("when was % born".split(), birth_date),
     ("what is the polar radius of %".split(), polar_radius),
+    ("infobox %".split(), show_infobox),
     (["bye"], bye_action),
 ]
 
