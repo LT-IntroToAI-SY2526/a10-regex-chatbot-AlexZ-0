@@ -5,7 +5,6 @@ from bs4 import BeautifulSoup
 from match import match
 from typing import List, Callable, Tuple, Any, Match
 
-
 def get_page_html(title: str) -> str:
     for attempt in range(5):
         response = requests.get(
@@ -152,8 +151,8 @@ def get_death_cause(name: str) -> str:
     match = get_match(infobox_text, pattern, error_text)
 
     return match.group("Destroyed_by")
-
-
+def commmands():
+    print:" when was __ born\nwhat is the polar radius of (Planet)\ninfobox(Name)\nHangman\nWhat were ___ achievements\nbye(exits chat bot)
 # below are a set of actions. Each takes a list argument and returns a list of answers
 # according to the action and the argument. It is important that each function returns a
 # list of the answer(s) and not just the answer itself.
@@ -207,11 +206,13 @@ pa_list: List[Tuple[Pattern, Action]] = [
     ("when was % born".split(), birth_date),
     ("what is the polar radius of %".split(), polar_radius),
     ("infobox %".split(), show_infobox),
-    ("How did % die".split(), death_cause),
+    ("How did % die".split(), death_cause), 
+    ("Hangman"),
+    ("What were % achievemnts"),
+    ("!Prompts")
     (["bye"], bye_action),
-]
-
-
+] 
+ 
 def search_pa_list(src: List[str]) -> List[str]:
     """Takes source, finds matching pattern and calls corresponding action. If it finds
     a match but has no answers it returns ["No answers"]. If it finds no match it
