@@ -145,14 +145,20 @@ def get_death_cause(name: str) -> str:
         birth date of the given person
     """
     infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
-    pattern = r"(?Cause of Death\D*)(?P<Died_by>(\w+ \w+ \w.*?(?=Occupations)))"
+    pattern = r"(?Cause of Death\D*)(?P<Died_by>(\w+ \w+ \w.*?(?=Occupations)))"#(Use [A-Za-z] regex pattern)
     error_text = (
         "Page infobox has no death information"
     )
     match = get_match(infobox_text, pattern, error_text)
 
     return match.group("Died_by")
-
+def get_spouse(name: str) -> str:
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
+    pattern = r"(?Spouses\D*)(?P<Spouses:>(\w+ \w+ \w.*?(?=Occupations)))"
+    error_text = (
+        "Page infobox has no death information"
+    )
+    match = get_match(infobox_text, pattern, error_text)
 
 # below are a set of actions. Each takes a list argument and returns a list of answers
 # according to the action and the argument. It is important that each function returns a
@@ -208,6 +214,8 @@ pa_list: List[Tuple[Pattern, Action]] = [
     ("what is the polar radius of %".split(), polar_radius),
     ("infobox %".split(), show_infobox),
     ("How did % die".split(), death_cause),
+    ("Who were the parents of %".split(), parents),
+    ("Who was the spouse of %".split(), spouse),
     (["bye"], bye_action),
 ]
 
