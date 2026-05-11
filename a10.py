@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from match import match
 from typing import List, Callable, Tuple, Any, Match
 
+
 def get_page_html(title: str) -> str:
     for attempt in range(5):
         response = requests.get(
@@ -103,7 +104,7 @@ def get_polar_radius(planet_name: str) -> str:
    
 def death_info(planet_name: str) -> str:
  
-    infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(planet_name)))
     pattern = r"(?:Polar radius|Mean radius)(?:[^\d]*)(?P<radius>[\d,.]+)(?:.*?)km"
     error_text = "Page infobox has no polar radius information"
     match = get_match(infobox_text, pattern, error_text)
@@ -144,15 +145,15 @@ def get_death_cause(name: str) -> str:
         birth date of the given person
     """
     infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
-    pattern = r"(?Cause of Death\D*)(?P<Destroyed_by>(\w+ \w+ \w.*?(?=Occupations)))"
+    pattern = r"(?Cause of Death\D*)(?P<Died_by>(\w+ \w+ \w.*?(?=Occupations)))"
     error_text = (
         "Page infobox has no death information"
     )
     match = get_match(infobox_text, pattern, error_text)
 
-    return match.group("Destroyed_by")
-def commmands():
-    print:" when was __ born\nwhat is the polar radius of (Planet)\ninfobox(Name)\nHangman\nWhat were ___ achievements\nbye(exits chat bot)
+    return match.group("Died_by")
+
+
 # below are a set of actions. Each takes a list argument and returns a list of answers
 # according to the action and the argument. It is important that each function returns a
 # list of the answer(s) and not just the answer itself.
@@ -206,13 +207,11 @@ pa_list: List[Tuple[Pattern, Action]] = [
     ("when was % born".split(), birth_date),
     ("what is the polar radius of %".split(), polar_radius),
     ("infobox %".split(), show_infobox),
-    ("How did % die".split(), death_cause), 
-    ("Hangman"),
-    ("What were % achievemnts"),
-    ("!Prompts")
+    ("How did % die".split(), death_cause),
     (["bye"], bye_action),
-] 
- 
+]
+
+
 def search_pa_list(src: List[str]) -> List[str]:
     """Takes source, finds matching pattern and calls corresponding action. If it finds
     a match but has no answers it returns ["No answers"]. If it finds no match it
