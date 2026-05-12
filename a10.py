@@ -101,15 +101,6 @@ def get_polar_radius(planet_name: str) -> str:
     match = get_match(infobox_text, pattern, error_text)
 
     return match.group("radius")
-   
-def death_info(planet_name: str) -> str:
- 
-    infobox_text = clean_text(get_first_infobox_text(get_page_html(planet_name)))
-    pattern = r"(?:Polar radius|Mean radius)(?:[^\d]*)(?P<radius>[\d,.]+)(?:.*?)km"
-    error_text = "Page infobox has no polar radius information"
-    match = get_match(infobox_text, pattern, error_text)
-
-    return match.group("radius")
 
 def get_birth_date(name: str) -> str:
     """Gets birth date of the given person
@@ -121,7 +112,6 @@ def get_birth_date(name: str) -> str:
         birth date of the given person
     """
     infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
-    print(infobox_text)
     pattern = r"(?:Born\D*)(?P<birth>\d{4}-\d{2}-\d{2})"
     error_text = (
         "Page infobox has no birth information (at least none in xxxx-xx-xx format)"
@@ -135,31 +125,14 @@ def show_infobox(matches: List[str]) -> List[str]:
     html = get_page_html(title)
     info = get_first_infobox_text(html)
     return [clean_text(info)]
-def get_death_cause(name: str) -> str:
-    """Gets birth date of the given person
 
-    Args:
-        name - name of the person
-
-    Returns:
-        birth date of the given person
-    """
-def get_death_cause(name: str) -> str:
+def get_endangered(name: str) -> str:
     infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
-    pattern = r"(?Cause of Death\D*)(?P<Died_by>(\w+ \w+ \w.*?(?=Occupations)))"#(Use [A-Za-z] regex pattern)
-    error_text = (
-        "Page infobox has no death information"
-    )
+    pattern = r"Conservation status\s*(.+?)\n"
+    error_text = "Page has no info on endangered status"
     match = get_match(infobox_text, pattern, error_text)
+    return match.group(1)
 
-    return match.group("Died_by")
-def get_spouse(name: str) -> str:
-    infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
-    pattern = r"(?Spouses\D*)(?P<Spouses:>(\w+ \w+ \w.*?(?=Occupations)))"
-    error_text = (
-        "Page infobox has no death information"
-    )
-    match = get_match(infobox_text, pattern, error_text)
 
 # below are a set of actions. Each takes a list argument and returns a list of answers
 # according to the action and the argument. It is important that each function returns a
@@ -175,16 +148,9 @@ def birth_date(matches: List[str]) -> List[str]:
         birth date of named person
     """
     return [get_birth_date(" ".join(matches))]
-def  death_cause(matches: List[str]) -> List[str]:
-    """Returns birth date of named person in matches
+def endangered(matches: List[str]) -> List[str]:
 
-    Args:
-        matches - match from pattern of person's name to find birth date of
-
-    Returns:
-        birth date of named person
-    """
-    return [get_death_cause(" ".join(matches))]
+    return [get_endangered(" ".join(matches))]
 
 def polar_radius(matches: List[str]) -> List[str]:
     """Returns polar radius of planet in matches
@@ -214,12 +180,11 @@ pa_list: List[Tuple[Pattern, Action]] = [
     ("when was % born".split(), birth_date),
     ("what is the polar radius of %".split(), polar_radius),
     ("infobox %".split(), show_infobox),
-    ("How did % die".split(), death_cause),
-    ("Who were the parents of %".split(), parents),
-    ("Who was the spouse of %".split(), spouse),
+    ("conservation status %".split(), endangered),
+    # ("Who were the parents of %".split(), parents),
+    # ("Who was the spouse of %".split(), spouse),
     (["bye"], bye_action),
 ]
-
 
 def search_pa_list(src: List[str]) -> List[str]:
     """Takes source, finds matching pattern and calls corresponding action. If it finds
