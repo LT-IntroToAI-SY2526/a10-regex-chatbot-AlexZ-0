@@ -134,13 +134,13 @@ def get_endangered(name: str) -> str:
     return match.group(1)
 def get_symptoms(sickness: str) -> str:
     infobox_text = clean_text(get_first_infobox_text(get_page_html(sickness)))
-    pattern = r"Symptoms\s+(?<symptoms>[A-Za-z' ,-]+?)(?=[A-Z\[])"
+    pattern = r"Symptoms\s*(.*?)Complications)"
     error_text = "Page has no info on symptoms"
     match = get_match(infobox_text, pattern, error_text)
     return match.group(1)
 def get_population(state: str) -> str:
     infobox_text = clean_text(get_first_infobox_text(get_page_html(state)))
-    pattern = r"Conservation status\s*(.+?)\n"
+    pattern = r"Population.*?Total\s*([\d,]+)"
     error_text = "Page has no info on population"
     match = get_match(infobox_text, pattern, error_text)
     return match.group(1)
@@ -163,7 +163,7 @@ def endangered(matches: List[str]) -> List[str]:
     return [get_endangered(" ".join(matches))]
 def symptoms(matches: List[str]) -> List[str]:
 
-    return [symptoms(" ".join(matches))]
+    return [get_symptoms(" ".join(matches))]
 def population(matches: List[str]) -> List[str]:
 
     return [get_population(" ".join(matches))]
@@ -196,6 +196,7 @@ pa_list: List[Tuple[Pattern, Action]] = [
     ("what is the polar radius of %".split(), polar_radius),
     ("infobox %".split(), show_infobox),
     ("conservation status %".split(), endangered),
+    ("what are the symptoms of %".split(), symptoms),
     ("what is the population of %".split(), population),
     (["bye"], bye_action),
 ]
