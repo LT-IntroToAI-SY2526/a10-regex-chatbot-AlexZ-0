@@ -132,8 +132,13 @@ def get_endangered(name: str) -> str:
     error_text = "Page has no info on endangered status"
     match = get_match(infobox_text, pattern, error_text)
     return match.group(1)
-
-
+def get_symptoms(name: str) -> str:
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
+    pattern = r"Symptoms\s+(?<symptoms>[A-Za-z' ,-]+?)(?=[A-Z\[])
+"
+    error_text = "Page has no info on symptoms"
+    match = get_match(infobox_text, pattern, error_text)
+    return match.group(1)
 # below are a set of actions. Each takes a list argument and returns a list of answers
 # according to the action and the argument. It is important that each function returns a
 # list of the answer(s) and not just the answer itself.
