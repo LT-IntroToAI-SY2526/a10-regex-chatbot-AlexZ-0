@@ -134,7 +134,7 @@ def get_endangered(name: str) -> str:
     return match.group(1)
 def get_symptoms(sickness: str) -> str:
     infobox_text = clean_text(get_first_infobox_text(get_page_html(sickness)))
-    pattern = r"Symptoms\s*(.*?)Complications)"
+    pattern = r"Symptoms\s*(.*?)Complications"
     error_text = "Page has no info on symptoms"
     match = get_match(infobox_text, pattern, error_text)
     return match.group(1)
