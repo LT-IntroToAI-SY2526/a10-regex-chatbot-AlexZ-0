@@ -4,6 +4,7 @@ import wikipedia
 from bs4 import BeautifulSoup
 from match import match
 from typing import List, Callable, Tuple, Any, Match
+import random
 
 
 def get_page_html(title: str) -> str:
@@ -144,6 +145,70 @@ def get_population(state: str) -> str:
     error_text = "Page has no info on population"
     match = get_match(infobox_text, pattern, error_text)
     return match.group(1)
+def get_wars(gun: str) -> str:
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(gun)))
+    pattern = r"Wars\s*(.*?)\n"
+    error_text = "Page has no info on wars it was used in"
+    match = get_match(infobox_text, pattern, error_text)
+    return match.group(1)
+#Hangman
+def play_hangman(dummy: List[str]) -> List[str]:
+    """Starts a hangman game using a random U.S. state or city."""
+    places = [
+        "California", "Texas", "Florida", "New York",
+        "Chicago", "Houston", "Phoenix", "Philadelphia",
+        "San Antonio", "San Diego", "Dalla", "Moscow"
+    ]
+
+    secret = random.choice(places).lower()
+    display = ["_" if c.isalpha() else c for c in secret]
+    guessed = set()
+    lives = 6
+
+    print("\n🎮 Starting Hangman! Guess the U.S. state or city.")
+    print("I’ll also give you a clue once you get close.\n")
+
+    while lives > 0 and "_" in display:
+        print("Word:", " ".join(display))
+        print(f"Lives left: {lives}")
+        print(f"Guessed letters: {', '.join(sorted(guessed))}\n")
+
+        guess = input("Guess a letter: ").lower().strip()
+
+        if not guess.isalpha() or len(guess) != 1:
+            print("Please guess a single letter.\n")
+            continue
+
+        if guess in guessed:
+            print("You already guessed that.\n")
+            continue
+
+        guessed.add(guess)
+
+        if guess in secret:
+            print("Correct!\n")
+            for i, c in enumerate(secret):
+                if c == guess:
+                    display[i] = c
+        else:
+            print("Wrong!\n")
+            lives -= 1
+
+        # Give a clue when half the word is revealed
+        if display.count("_") <= len(secret) // 2:
+            try:
+                clue = get_population(secret.title())
+                print(f" Clue: Its population is around {clue}.\n")
+            except:
+                pass
+
+    if "_" not in display:
+        print(f"You win! The word was: {secret.title()}")
+    else:
+        print(f"Out of lives! The word was: {secret.title()}")
+
+    return ["Game over"]
+
 # below are a set of actions. Each takes a list argument and returns a list of answers
 # according to the action and the argument. It is important that each function returns a
 # list of the answer(s) and not just the answer itself.
@@ -161,6 +226,9 @@ def birth_date(matches: List[str]) -> List[str]:
 def endangered(matches: List[str]) -> List[str]:
 
     return [get_endangered(" ".join(matches))]
+def wars(matches: List[str]) -> List[str]:
+
+    return [get_wars(" ".join(matches))]
 def symptoms(matches: List[str]) -> List[str]:
 
     return [get_symptoms(" ".join(matches))]
@@ -198,6 +266,8 @@ pa_list: List[Tuple[Pattern, Action]] = [
     ("conservation status %".split(), endangered),
     ("what are the symptoms of %".split(), symptoms),
     ("what is the population of %".split(), population),
+    ("play hangman".split(), play_hangman),
+    ("where was % used".split(), wars),
     (["bye"], bye_action),
 ]
 
