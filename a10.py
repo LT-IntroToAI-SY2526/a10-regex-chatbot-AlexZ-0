@@ -104,14 +104,6 @@ def get_polar_radius(planet_name: str) -> str:
     return match.group("radius")
 
 def get_birth_date(name: str) -> str:
-    """Gets birth date of the given person
-
-    Args:
-        name - name of the person
-
-    Returns:
-        birth date of the given person
-    """
     infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
     pattern = r"(?:Born\D*)(?P<birth>\d{4}-\d{2}-\d{2})"
     error_text = (
@@ -214,14 +206,6 @@ def play_hangman(dummy: List[str]) -> List[str]:
 # list of the answer(s) and not just the answer itself.
 
 def birth_date(matches: List[str]) -> List[str]:
-    """Returns birth date of named person in matches
-
-    Args:
-        matches - match from pattern of person's name to find birth date of
-
-    Returns:
-        birth date of named person
-    """
     return [get_birth_date(" ".join(matches))]
 def endangered(matches: List[str]) -> List[str]:
 
